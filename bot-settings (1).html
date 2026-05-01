@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Настройка бота — NeuroBot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--card:#1a1a2e;--card-hover:#22223e;--accent:#6366f1;--accent2:#818cf8;--accent3:#ec4899;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--border:rgba(255,255,255,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(99,102,241,0.1) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(236,72,153,0.06) 0%,transparent 50%);z-index:-1}
+.sidebar{position:fixed;left:0;top:0;width:280px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;z-index:100;overflow-y:auto}
+.logo{display:flex;align-items:center;gap:12px;padding:0 24px 32px;border-bottom:1px solid var(--border)}
+.logo-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent3));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.logo-text{font-size:22px;font-weight:800}
+.logo-text span{color:var(--accent2)}
+.nav-section{padding:16px}
+.nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:0 12px 12px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;cursor:pointer;transition:all .2s;color:var(--text2);font-size:14px;font-weight:500;margin-bottom:2px}
+.nav-item:hover{background:var(--card);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,var(--accent),rgba(236,72,153,0.8));color:white;box-shadow:0 4px 15px rgba(99,102,241,0.3)}
+.nav-item i{width:20px;text-align:center;font-style:normal}
+.user-card{position:sticky;bottom:0;background:var(--bg2);padding:16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.user-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,var(--danger));display:flex;align-items:center;justify-content:center;font-weight:700}
+.user-info{flex:1}
+.user-name{font-size:14px;font-weight:600}
+.user-plan{font-size:12px;color:var(--accent2);font-weight:500}
+.main{margin-left:280px;padding:32px;min-height:100vh}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.header-title h1{font-size:32px;font-weight:800;margin-bottom:4px}
+.header-title p{color:var(--text2);font-size:15px}
+.header-actions{display:flex;gap:12px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn:hover{background:var(--card-hover)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;border:none;box-shadow:0 4px 15px rgba(99,102,241,0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(99,102,241,0.4)}
+.card{background:var(--card);border-radius:16px;padding:24px;border:1px solid var(--border);margin-bottom:20px;transition:all .3s}
+.card:hover{border-color:rgba(99,102,241,0.2)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.card-title{font-size:18px;font-weight:700}
+.card-subtitle{font-size:13px;color:var(--text3);margin-top:4px}
+.form-group{margin-bottom:20px}
+.form-label{display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text2)}
+.form-hint{font-size:12px;color:var(--text3);margin-top:6px}
+input,textarea,select{width:100%;padding:12px 16px;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;transition:all .2s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+textarea{min-height:100px;resize:vertical}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.toggle-info p{font-size:13px;color:var(--text3)}
+.toggle{position:relative;width:44px;height:24px;background:var(--bg2);border-radius:12px;cursor:pointer;transition:all .2s;border:1px solid var(--border)}
+.toggle.active{background:var(--accent)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:white;border-radius:50%;transition:all .2s}
+.toggle.active::after{left:22px}
+.personality-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.personality-tag{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);font-size:13px;cursor:pointer;transition:all .2s}
+.personality-tag:hover{border-color:var(--accent);color:var(--accent2)}
+.personality-tag.active{background:var(--accent);border-color:var(--accent);color:white}
+.scenario-card{background:var(--bg2);border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.scenario-card:hover{border-color:rgba(99,102,241,0.3)}
+.scenario-card.active{border-color:var(--accent);background:rgba(99,102,241,0.05)}
+.scenario-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.scenario-name{font-size:14px;font-weight:600}
+.scenario-desc{font-size:13px;color:var(--text3)}
+.scenario-status{font-size:11px;padding:2px 10px;border-radius:10px;font-weight:600}
+.status-active{background:rgba(34,197,94,0.15);color:var(--success)}
+.status-draft{background:rgba(245,158,11,0.15);color:var(--warning)}
+.test-chat{background:var(--bg2);border-radius:16px;padding:20px;border:1px solid var(--border);max-width:400px}
+.test-message{display:flex;gap:10px;margin-bottom:12px}
+.test-avatar{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.test-avatar.bot{background:linear-gradient(135deg,var(--accent),var(--accent3))}
+.test-bubble{background:var(--card);padding:10px 14px;border-radius:12px;border-bottom-left-radius:3px;font-size:13px;max-width:260px;line-height:1.5}
+.test-bubble.user{background:var(--accent);border-bottom-left-radius:12px;border-bottom-right-radius:3px}
+.test-input{display:flex;gap:8px;margin-top:16px}
+.test-input input{flex:1}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.bot-preview{width:100px;height:100px;border-radius:24px;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:16px;box-shadow:0 8px 30px rgba(99,102,241,0.3)}
+.time-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.time-slot{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);text-align:center;font-size:13px;cursor:pointer;transition:all .2s}
+.time-slot:hover{border-color:var(--accent);color:var(--accent2)}
+.time-slot.active{background:var(--accent);border-color:var(--accent);color:white}
+@media(max-width:1200px){.grid-2{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0;padding:20px}}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--card);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<aside class="sidebar">
+<div class="logo"><div class="logo-icon">💇</div><div class="logo-text">Neuro<span>Bot</span></div></div>
+<div class="nav-section">
+<div class="nav-label">Главное</div>
+<div class="nav-item" onclick="location.href='admin.html'"><i>📊</i>Аналитика</div>
+<div class="nav-item"><i>💬</i>Диалоги</div>
+<div class="nav-item"><i>👥</i>CRM</div>
+<div class="nav-item"><i>📅</i>Записи</div>
+</div>
+<div class="nav-section">
+<div class="nav-label">Бот</div>
+<div class="nav-item active"><i>🤖</i>Настройки бота</div>
+<div class="nav-item"><i>📚</i>База знаний</div>
+<div class="nav-item"><i>🎯</i>Сценарии</div>
+</div>
+<div class="nav-section">
+<div class="nav-label">Салон</div>
+<div class="nav-item"><i>✂️</i>Услуги</div>
+<div class="nav-item"><i>👩</i>Мастера</div>
+<div class="nav-item"><i>🏢</i>Филиалы</div>
+</div>
+<div class="nav-section">
+<div class="nav-label">Биллинг</div>
+<div class="nav-item"><i>💳</i>Тариф</div>
+<div class="nav-item"><i>📄</i>История</div>
+</div>
+<div class="user-card">
+<div class="user-avatar">АК</div>
+<div class="user-info"><div class="user-name">Алексей К.</div><div class="user-plan">Pro Plan</div></div>
+</div>
+</aside>
+
+<main class="main">
+<div class="header">
+<div class="header-title"><h1>Настройка AI-бота</h1><p>Настройте поведение, стиль общения и сценарии для салона</p></div>
+<div class="header-actions">
+<button class="btn">↩️ Отмена</button>
+<button class="btn btn-primary">💾 Сохранить</button>
+</div>
+</div>
+
+<div class="grid-2">
+<div>
+<div class="card">
+<div class="card-header"><div><div class="card-title">Общая информация</div><div class="card-subtitle">Имя, аватар и приветствие бота</div></div></div>
+<div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:20px">
+<div class="bot-preview">🤖</div>
+<div style="flex:1">
+<div class="form-group">
+<label class="form-label">Имя бота</label>
+<input type="text" value="Айша — ассистент салона Glow">
+</div>
+<div class="form-group">
+<label class="form-label">Приветственное сообщение</label>
+<textarea>Здравствуйте! 💅 Я Айша, виртуальный ассистент салона красоты "Glow". Помогу записаться на процедуру, расскажу о ценах и отвечу на вопросы. Чем могу помочь?</textarea>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-header"><div><div class="card-title">Характер бота</div><div class="card-subtitle">Выберите стиль общения с клиентками</div></div></div>
+<div class="form-group">
+<label class="form-label">Тон общения</label>
+<div class="personality-tags">
+<span class="personality-tag active">😊 Дружелюбный и тёплый</span>
+<span class="personality-tag">💼 Профессиональный</span>
+<span class="personality-tag">✨ Стильный и модный</span>
+<span class="personality-tag">🤝 Консультативный</span>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Дополнительные инструкции для AI</label>
+<textarea placeholder="Например: Всегда предлагай записаться после ответа. Упоминай акции при записи на 2+ услуги. Используй эмодзи умеренно.">Всегда предлагай записаться после ответа на вопрос. Упоминай акцию "Маникюр + педикюр = скидка 15%". Используй эмодзи 💅✨🌸. Если клиентка спрашивает про цвета — предложи посмотреть каталог в Instagram.</textarea>
+<div class="form-hint">Эти инструкции помогут AI лучше понимать специфику вашего салона</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-header"><div><div class="card-title">Рабочее время</div><div class="card-subtitle">Когда бот может записывать клиентов</div></div></div>
+<div class="form-group">
+<label class="form-label">Дни работы</label>
+<div class="personality-tags">
+<span class="personality-tag active">Пн</span>
+<span class="personality-tag active">Вт</span>
+<span class="personality-tag active">Ср</span>
+<span class="personality-tag active">Чт</span>
+<span class="personality-tag active">Пт</span>
+<span class="personality-tag">Сб</span>
+<span class="personality-tag">Вс</span>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Часы работы салона</label>
+<div style="display:flex;gap:12px;align-items:center">
+<select style="width:auto"><option>09:00</option><option>10:00</option></select>
+<span style="color:var(--text3)">до</span>
+<select style="width:auto"><option>20:00</option><option>21:00</option></select>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Длительность слота</label>
+<select><option>30 минут</option><option>1 час</option><option>1.5 часа</option></select>
+</div>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-header"><div><div class="card-title">Сценарии диалогов</div><div class="card-subtitle">Активные сценарии обработки запросов</div></div></div>
+<div class="scenario-card active">
+<div class="scenario-header"><span class="scenario-name">🎯 Квалификация клиентов</span><span class="scenario-status status-active">Активен</span></div>
+<div class="scenario-desc">Узнаёт что хочет клиентка, бюджет, срочность. Передаёт "горячих" администратору.</div>
+</div>
+<div class="scenario-card active">
+<div class="scenario-header"><span class="scenario-name">📅 Запись на услуги</span><span class="scenario-status status-active">Активен</span></div>
+<div class="scenario-desc">Показывает свободное время, записывает, отправляет напоминание за 2 часа.</div>
+</div>
+<div class="scenario-card active">
+<div class="scenario-header"><span class="scenario-name">💰 Расчёт стоимости</span><span class="scenario-status status-active">Активен</span></div>
+<div class="scenario-desc">Автоматический расчёт цены по прайсу. Учитывает длину волос, сложность и т.д.</div>
+</div>
+<div class="scenario-card active">
+<div class="scenario-header"><span class="scenario-name">🔄 Перевод на оператора</span><span class="scenario-status status-active">Активен</span></div>
+<div class="scenario-desc">Определяет сложные случаи (жалобы, отмены) и переключает на администратора.</div>
+</div>
+<div class="scenario-card">
+<div class="scenario-header"><span class="scenario-name">💳 Kaspi-оплата</span><span class="scenario-status status-draft">Черновик</span></div>
+<div class="scenario-desc">Отправляет ссылку на оплату предоплаты через Kaspi внутри чата.</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-header"><div><div class="card-title">Настройки поведения</div><div class="card-subtitle">Включите нужные функции</div></div></div>
+<div class="toggle-row">
+<div class="toggle-info"><h4>Автоответы</h4><p>Бот отвечает на сообщения автоматически</p></div>
+<div class="toggle active"></div>
+</div>
+<div class="toggle-row">
+<div class="toggle-info"><h4>Запись на услуги</h4><p>Автоматическое бронирование времени</p></div>
+<div class="toggle active"></div>
+</div>
+<div class="toggle-row">
+<div class="toggle-info"><h4>Напоминания</h4><p>За 2 часа до визита и за день</p></div>
+<div class="toggle active"></div>
+</div>
+<div class="toggle-row">
+<div class="toggle-info"><h4>Сбор отзывов</h4><p>После процедуры просит оценить мастера</p></div>
+<div class="toggle active"></div>
+</div>
+<div class="toggle-row">
+<div class="toggle-info"><h4>Kaspi-оплата</h4><p>Предоплата через Kaspi в чате</p></div>
+<div class="toggle"></div>
+</div>
+<div class="toggle-row">
+<div class="toggle-info"><h4>Рекомендации услуг</h4><p>Предлагает доп. услуги при записи</p></div>
+<div class="toggle active"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-header"><div><div class="card-title">Тестирование</div><div class="card-subtitle">Проверьте, как бот отвечает клиенткам</div></div></div>
+<div class="test-chat">
+<div class="test-message"><div class="test-avatar bot">🤖</div><div class="test-bubble">Привет! Я Айша из салона "Glow". Готова помочь с записью! 💅</div></div>
+<div class="test-message" style="flex-direction:row-reverse"><div class="test-avatar user">👤</div><div class="test-bubble user">Сколько стоит окрашивание?</div></div>
+<div class="test-message"><div class="test-avatar bot">🤖</div><div class="test-bubble">Окрашивание от 8 000₽ до 15 000₽ в зависимости от длины и техники. ✨<br><br>У нас есть акция: окрашивание + стрижка = скидка 20%! Хотите записаться?</div></div>
+<div class="test-input"><input type="text" placeholder="Напишите тестовое сообщение..."><button class="btn btn-primary">➤</button></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+<script>
+document.querySelectorAll('.toggle').forEach(t=>{t.addEventListener('click',()=>t.classList.toggle('active'))});
+document.querySelectorAll('.personality-tag').forEach(tag=>{tag.addEventListener('click',()=>{if(tag.parentElement.querySelector('.active')){tag.parentElement.querySelectorAll('.personality-tag').forEach(t=>t.classList.remove('active'))}tag.classList.toggle('active')})});
+document.querySelectorAll('.scenario-card').forEach(card=>{card.addEventListener('click',()=>card.classList.toggle('active'))});
+document.querySelectorAll('.time-slot').forEach(slot=>{slot.addEventListener('click',()=>slot.classList.toggle('active'))});
+</script>
+</body>
+</html>
