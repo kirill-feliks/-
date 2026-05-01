@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroBot — AI-ассистент для салонов красоты</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--card:#1a1a2e;--accent:#6366f1;--accent2:#818cf8;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--border:rgba(255,255,255,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(99,102,241,0.12) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(236,72,153,0.08) 0%,transparent 50%);z-index:-1}
+.nav{position:fixed;inset:0 0 auto 0;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(10,10,15,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#ec4899);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo span{color:var(--accent2)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:12px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#ec4899);color:white;box-shadow:0 4px 20px rgba(99,102,241,0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(99,102,241,0.4)}
+.btn-ghost{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:#22223e}
+.btn-large{padding:16px 32px;font-size:16px}
+.hero{padding:160px 40px 100px;text-align:center;max-width:900px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.15);color:var(--accent2);padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:24px;border:1px solid rgba(99,102,241,0.2)}
+.hero h1{font-size:60px;font-weight:900;line-height:1.1;margin-bottom:24px;background:linear-gradient(135deg,#fff 0%,#818cf8 50%,#ec4899 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:20px;color:var(--text2);max-width:600px;margin:0 auto 40px}
+.hero-buttons{display:flex;gap:16px;justify-content:center;margin-bottom:60px}
+.hero-stats{display:flex;justify-content:center;gap:48px;padding-top:40px;border-top:1px solid var(--border)}
+.hero-stat h3{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--accent2),#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-stat p{font-size:14px;color:var(--text3);margin-top:4px}
+.section{padding:100px 40px;max-width:1200px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:60px}
+.section-header h2{font-size:42px;font-weight:800;margin-bottom:16px}
+.section-header p{font-size:18px;color:var(--text2);max-width:600px;margin:0 auto}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feature-card{background:var(--card);border-radius:20px;padding:32px;border:1px solid var(--border);transition:all .3s}
+.feature-card:hover{transform:translateY(-8px);border-color:rgba(99,102,241,0.3);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
+.feature-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px}
+.feature-card h3{font-size:20px;font-weight:700;margin-bottom:12px}
+.feature-card p{font-size:15px;color:var(--text2);line-height:1.6}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
+.pricing-card{background:var(--card);border-radius:20px;padding:40px 32px;border:1px solid var(--border);position:relative;transition:all .3s;text-align:center}
+.pricing-card:hover{transform:translateY(-8px)}
+.pricing-card.popular{border-color:var(--accent);box-shadow:0 0 40px rgba(99,102,241,0.15);transform:scale(1.05)}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),#ec4899);color:white;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700}
+.pricing-card h3{font-size:20px;font-weight:700;margin-bottom:8px}
+.pricing-card .price{font-size:48px;font-weight:900;margin:16px 0;background:linear-gradient(135deg,#fff,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pricing-card .price span{font-size:16px;font-weight:500;opacity:0.7}
+.pricing-features{list-style:none;margin:24px 0;text-align:left}
+.pricing-features li{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:14px;color:var(--text2)}
+.pricing-features li.included{color:var(--text)}
+.pricing-features li i{font-size:12px}
+.demo-chat{max-width:500px;margin:40px auto 0;background:var(--card);border-radius:20px;padding:24px;border:1px solid var(--border)}
+.chat-msg{display:flex;gap:12px;margin-bottom:16px;animation:fadeInUp .5s ease forwards;opacity:0}
+.chat-msg:nth-child(1){animation-delay:.2s}.chat-msg:nth-child(2){animation-delay:.6s}.chat-msg:nth-child(3){animation-delay:1s}
+.chat-avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.chat-avatar.bot{background:linear-gradient(135deg,var(--accent),#ec4899)}
+.chat-avatar.user{background:var(--bg2)}
+.chat-bubble{background:var(--bg2);padding:12px 16px;border-radius:14px;border-bottom-left-radius:4px;font-size:14px;line-height:1.5;max-width:320px}
+.chat-bubble.user{background:var(--accent);border-bottom-left-radius:14px;border-bottom-right-radius:4px}
+.footer{background:var(--bg2);border-top:1px solid var(--border);padding:60px 40px 30px;margin-top:100px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;max-width:1200px;margin:0 auto 40px}
+.footer-links h4{font-size:14px;font-weight:700;margin-bottom:16px}
+.footer-links a{display:block;color:var(--text3);text-decoration:none;padding:6px 0;font-size:14px;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-bottom{text-align:center;padding-top:30px;border-top:1px solid var(--border);color:var(--text3);font-size:13px}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){.hero h1{font-size:36px}.features-grid,.pricing-grid{grid-template-columns:1fr}.pricing-card.popular{transform:scale(1)}.footer-grid{grid-template-columns:1fr}.nav-links{display:none}}
+</style>
+<base target="_blank">
+</head>
+<body>
+<div class="bg"></div>
+<nav class="nav">
+<div class="logo"><div class="logo-icon">💇</div>Neuro<span>Bot</span></div>
+<div class="nav-links">
+<a href="#features">Возможности</a>
+<a href="#demo">Демо</a>
+<a href="#pricing">Тарифы</a>
+<a href="admin.html" class="btn btn-primary">Войти</a>
+</div>
+</nav>
+
+<section class="hero">
+<div class="hero-badge">✨ Уже 200+ салонов увеличили записи на 40%</div>
+<h1>AI-ассистент,<br>который заполняет<br>ваш салон клиентами</h1>
+<p>Отвечает в Telegram 24/7, квалифицирует клиентов, записывает на услуги и напоминает о визите. Пока вы делаете маникюр — бот продаёт.</p>
+<div class="hero-buttons">
+<a href="#pricing" class="btn btn-primary btn-large">7 дней бесплатно →</a>
+<a href="#demo" class="btn btn-ghost btn-large">Смотреть демо</a>
+</div>
+<div class="hero-stats">
+<div class="hero-stat"><h3>200+</h3><p>Салонов-партнёров</p></div>
+<div class="hero-stat"><h3>40%</h3><p>Рост записей</p></div>
+<div class="hero-stat"><h3>2.4с</h3><p>Время ответа</p></div>
+<div class="hero-stat"><h3>98%</h3><p>Довольных клиентов</p></div>
+</div>
+</section>
+
+<section class="section" id="features">
+<div class="section-header">
+<h2>Всё, что нужно салону красоты</h2>
+<p>Один бот заменяет администратора и не пропускает ни одного клиента</p>
+</div>
+<div class="features-grid">
+<div class="feature-card">
+<div class="feature-icon" style="background:rgba(99,102,241,0.15)">💬</div>
+<h3>Автоответы 24/7</h3>
+<p>Отвечает на вопросы о ценах, услугах, мастерах даже ночью. Клиент не уйдёт к конкуренту.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon" style="background:rgba(34,197,94,0.15)">📅</div>
+<h3>Запись на услуги</h3>
+<p>Проверяет свободное время мастеров, предлагает слоты, записывает клиента и отправляет напоминание.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon" style="background:rgba(236,72,153,0.15)">🎯</div>
+<h3>Квалификация клиентов</h3>
+<p>Узнаёт что хочет клиент, его бюджет и срочность. Передаёт "горячих" вам, "холодных" — бот дорабатывает.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon" style="background:rgba(245,158,11,0.15)">📚</div>
+<h3>База знаний салона</h3>
+<p>Загрузите прайс, фото работ, описания услуг — бот выучит всё за 5 минут и будет отвечать точно.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon" style="background:rgba(6,182,212,0.15)">📊</div>
+<h3>Аналитика и CRM</h3>
+<p>Видите сколько диалогов, конверсию в запись, популярные услуги и лучших мастеров в реальном времени.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon" style="background:rgba(139,92,246,0.15)">💳</div>
+<h3>Оплата Kaspi</h3>
+<p>Клиент может внести предоплату прямо в чате через Kaspi. Больше не нужно звонить и напоминать.</p>
+</div>
+</div>
+</section>
+
+<section class="section" id="demo">
+<div class="section-header">
+<h2>Посмотрите, как бот записывает клиента</h2>
+<p>Реальный диалог с клиенткой салона "Glow"</p>
+</div>
+<div class="demo-chat">
+<div class="chat-msg"><div class="chat-avatar bot">🤖</div><div class="chat-bubble">Здравствуйте! 💅 Я ассистент салона "Glow". Чем могу помочь?</div></div>
+<div class="chat-msg" style="flex-direction:row-reverse"><div class="chat-avatar user">👤</div><div class="chat-bubble user">Привет! Сколько стоит маникюр с покрытием?</div></div>
+<div class="chat-msg"><div class="chat-avatar bot">🤖</div><div class="chat-bubble">Маникюр с покрытием — 5 500₽. 💅<br><br>У нас есть свободные места завтра:<br>• 10:00 — мастер Айгуль<br>• 14:00 — мастер Дана<br>• 16:30 — мастер Айгуль<br><br>Какое время удобно?</div></div>
+<div class="chat-msg" style="flex-direction:row-reverse"><div class="chat-avatar user">👤</div><div class="chat-bubble user">14:00 хорошо</div></div>
+<div class="chat-msg"><div class="chat-avatar bot">🤖</div><div class="chat-bubble">Отлично! ✅ Записала вас завтра в 14:00 к мастеру Дана.<br><br>Адрес: ул. Абая 45, 3 этаж. Ждём вас! Напомним за час.</div></div>
+</div>
+</section>
+
+<section class="section" id="pricing">
+<div class="section-header">
+<h2>Простая цена для салона</h2>
+<p>Начните бесплатно, масштабируйтесь по мере роста</p>
+</div>
+<div class="pricing-grid">
+<div class="pricing-card">
+<h3>Starter</h3>
+<p style="color:var(--text3);font-size:14px">Для малого салона</p>
+<div class="price">25 000₸<span>/мес</span></div>
+<ul class="pricing-features">
+<li class="included"><i style="color:var(--success)">✓</i> Telegram-бот</li>
+<li class="included"><i style="color:var(--success)">✓</i> До 300 диалогов/мес</li>
+<li class="included"><i style="color:var(--success)">✓</i> Базовые автоответы</li>
+<li class="included"><i style="color:var(--success)">✓</i> Запись на услуги</li>
+<li><i style="color:var(--text3)">✗</i> CRM и аналитика</li>
+<li><i style="color:var(--text3)">✗</i> Kaspi-оплата</li>
+</ul>
+<button class="btn btn-ghost" style="width:100%">Выбрать Starter</button>
+</div>
+<div class="pricing-card popular">
+<div class="popular-badge">ПОПУЛЯРНЫЙ</div>
+<h3>Pro</h3>
+<p style="color:var(--text3);font-size:14px">Для растущего салона</p>
+<div class="price">50 000₸<span>/мес</span></div>
+<ul class="pricing-features">
+<li class="included"><i style="color:var(--success)">✓</i> Telegram + WhatsApp</li>
+<li class="included"><i style="color:var(--success)">✓</i> До 1 000 диалогов/мес</li>
+<li class="included"><i style="color:var(--success)">✓</i> AI-автоответы</li>
+<li class="included"><i style="color:var(--success)">✓</i> CRM клиентов</li>
+<li class="included"><i style="color:var(--success)">✓</i> Аналитика и воронка</li>
+<li><i style="color:var(--text3)">✗</i> Kaspi-оплата</li>
+</ul>
+<button class="btn btn-primary" style="width:100%">Выбрать Pro</button>
+</div>
+<div class="pricing-card">
+<h3>Business</h3>
+<p style="color:var(--text3);font-size:14px">Для сети салонов</p>
+<div class="price">75 000₸<span>/мес</span></div>
+<ul class="pricing-features">
+<li class="included"><i style="color:var(--success)">✓</i> Все каналы + API</li>
+<li class="included"><i style="color:var(--success)">✓</i> Неограниченные диалоги</li>
+<li class="included"><i style="color:var(--success)">✓</i> Kaspi-оплата в чате</li>
+<li class="included"><i style="color:var(--success)">✓</i> Несколько филиалов</li>
+<li class="included"><i style="color:var(--success)">✓</i> White-label брендинг</li>
+<li class="included"><i style="color:var(--success)">✓</i> Приоритетная поддержка</li>
+</ul>
+<button class="btn btn-ghost" style="width:100%">Выбрать Business</button>
+</div>
+</div>
+</section>
+
+<section class="section" style="text-align:center">
+<div style="background:linear-gradient(135deg,var(--accent),#ec4899);border-radius:24px;padding:60px">
+<h2 style="font-size:36px;font-weight:800;margin-bottom:16px">Готовы заполнить салон клиентами?</h2>
+<p style="font-size:18px;opacity:0.9;margin-bottom:32px">7 дней бесплатно. Настройка за 15 минут. Первая запись уже сегодня.</p>
+<button class="btn btn-large" style="background:white;color:var(--accent)">Начать бесплатно →</button>
+</div>
+</section>
+
+<footer class="footer">
+<div class="footer-grid">
+<div>
+<div class="logo"><div class="logo-icon">💇</div>Neuro<span>Bot</span></div>
+<p style="color:var(--text3);margin-top:12px;font-size:14px">AI-ассистенты для салонов красоты.<br>Автоматизируем записи 24/7.</p>
+</div>
+<div class="footer-links">
+<h4>Продукт</h4>
+<a href="#">Возможности</a>
+<a href="#">Тарифы</a>
+<a href="#">Для салонов</a>
+<a href="#">Для барбершопов</a>
+</div>
+<div class="footer-links">
+<h4>Компания</h4>
+<a href="#">О нас</a>
+<a href="#">Блог</a>
+<a href="#">Карьера</a>
+<a href="#">Контакты</a>
+</div>
+<div class="footer-links">
+<h4>Поддержка</h4>
+<a href="#">Документация</a>
+<a href="#">Помощь</a>
+<a href="#">Статус</a>
+<a href="#">Безопасность</a>
+</div>
+</div>
+<div class="footer-bottom">© 2026 NeuroBot. Все права защищены.</div>
+</footer>
+</body>
+</html>для салонов красоты.<br>Автоматизируем записи 24/7.</p>
+</div>
+<div class="footer-links">
+<h4>Продукт</h4>
+<a href="#features">Возможности</a>
+<a href="#pricing">Тарифы</a>
+<a href="#">Для салонов</a>
+<a href="#">Для барбершопов</a>
+</div>
+<div class="footer-links">
+<h4>Компания</h4>
+<a href="#">О нас</a>
+<a href="#">Блог</a>
+<a href="#">Карьера</a>
+</div>
+<div class="footer-links">
+<h4>Поддержка</h4>
+<a href="#">Помощь</a>
+<a href="#">Kaspi оплата</a>
+<a href="#">Статус</a>
+</div>
+</div>
+<div class="footer-bottom">© 2026 NeuroBot. Казахстан.</div>
+</footer>
+</body>
+  </html>
